@@ -36,9 +36,7 @@ function crearTarea(tarea){
             const conexion = conectar();
 
             let [{id}] = await conexion`INSERT INTO tareas (tarea) VALUES (${tarea}) RETURNING id`;
-
             conexion.end();
-
             ok(id);
 
         }catch(error){
@@ -49,7 +47,70 @@ function crearTarea(tarea){
     });
 }
 
+
+function borrarTarea(id){
+    return new Promise(async (ok,ko) =>{
+        const conexion = conectar();
+
+        try{
+            
+            let {count} = await conexion`DELETE FROM tareas WHERE id = ${id}`;
+            conexion.end();
+            ok(count);
+
+        }catch(error){
+            ko({ error : "error en BBDD"});
+        }
+
+    });
+}
+
+function toggleEstado(id){
+    return new Promise(async (ok,ko) =>{
+        const conexion = conectar();
+
+        try{
+            
+            let {count} = await conexion`UPDATE tareas SET terminada = NOT terminada WHERE id = ${id}`;
+            conexion.end();
+            ok(count);
+
+        }catch(error){
+            ko({ error : "error en BBDD"});
+        }
+
+    });
+}
+
+function editarTexto(id, tarea){
+    return new Promise(async (ok,ko) =>{
+        const conexion = conectar();
+
+        try{
+            
+            let {count} = await conexion`UPDATE tareas SET tarea = ${tarea} WHERE id = ${id}`;
+            conexion.end();
+            ok(count);
+
+        }catch(error){
+            ko({ error : "error en BBDD"});
+        }
+
+    });
+}
+
+
+
 /*
+
+editarTexto(5, "integrar front y back")
+.then( x => console.log(x))
+.catch( x => console.log(x));
+
+borrarTarea(2)
+.then( x => console.log(x))
+.catch( x => console.log(x));
+
 tareas()
 .then( x => console.log(x))
 .catch( x => console.log(x));
@@ -58,4 +119,4 @@ crearTarea("Cortar los arboles")
 .then( x => console.log(x))
 .catch( x => console.log(x));*/
 
-module.exports = {tareas, crearTarea};
+module.exports = {tareas, crearTarea, borrarTarea, toggleEstado, editarTexto};

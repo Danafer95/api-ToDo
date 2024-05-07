@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const {json} = require("body-parser");
-const {tareas, crearTarea} = require("./db");
+const {tareas, crearTarea, borrarTarea, toggleEstado, editarTexto} = require("./db");
 
 
 const servidor = express();
@@ -40,6 +40,20 @@ servidor.post("/tareas/nueva", async (peticion,respuesta, siguiente) => {
    }
    
 });
+
+servidor.delete("/tareas/borrar/:id([0-9]+)", async (peticion,respuesta)=>{
+    try{
+
+        let count = await borrarTarea(peticion.params.id);
+        respuesta.json({resultado : count ? "ok" : "ko"});
+
+   }catch{
+        respuesta.status(500);
+        respuesta.json(error);
+   }
+    
+});
+
 
 servidor.use((peticion,respuesta) => {
     respuesta.status(404);
